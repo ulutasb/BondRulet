@@ -47,20 +47,20 @@ create_bond() {
     # Bond'u oluştur ve nics ekle
     nmcli con add type bond con-name "$bond_name"  ifname "$bond_name"
     for nic in "${nics[@]}"; do
-        nmcli con add type ethernet slave-type bond con-name "$bond_name-slave-$nic"  ifname "$nic" master "$bond_name"
+        nmcli con add type ethernet slave-type bond con-name "$bond_name-slave-$nic"  ifname "$nic" master "$bond_name" > /dev/null 2>&1
     done
 
     # LACP ayarlarını yap
     if [ "$lacp" == "evet" ]; then
-        nmcli con mod "$bond_name" bond.options mode=802.3ad
+        nmcli con mod "$bond_name" bond.options mode=802.3ad > /dev/null 2>&1
     fi
 
     # IP ve GW ayarlarını yap
-    nmcli con mod "$bond_name" ipv4.addresses "$ip"
+    nmcli con mod "$bond_name" ipv4.addresses "$ip" 
     if [ -n "$gw" ]; then
-        nmcli con mod "$bond_name" ipv4.gateway "$gw"
+        nmcli con mod "$bond_name" ipv4.gateway "$gw" 
     fi
-    nmcli con mod "$bond_name" ipv4.method manual
+    nmcli con mod "$bond_name" ipv4.method manual 
 
     # Bond'u aktif et
     nmcli con up "$bond_name"
@@ -93,8 +93,8 @@ test_and_cleanup_bond() {
         echo "Bond $bond_name başarısız, beklenen bant genişliği: ${expected_bw} Mb/s, mevcut: $bw Mb/s"
 
         # Bond ve slave'leri sil
-        nmcli con down "$bond_name"
-        nmcli con delete "$bond_name"
+        nmcli con down "$bond_name" > /dev/null 2>&1
+        nmcli con delete "$bond_name" > /dev/null 2>&1
         for nic in "${nics[@]}"; do
             nmcli con delete $(nmcli -t -f UUID,DEVICE,NAME con | grep "$nic" | cut -d: -f1) && echo "$nic'e tanımlanmis slave siliniyor."
         done
