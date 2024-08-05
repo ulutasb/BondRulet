@@ -10,7 +10,7 @@ fi
 # Yapılandırma dosyasını oku ve değişkenleri ayarla
 while IFS='=' read -r key value; do
     case "$key" in
-        BOND_NAME) BOND_NAME="$value" ;
+        BOND_NAME) BOND_NAME="$value" ;;
         DATA_BW) DATA_BW="$value" ;;
         DATA_GW) DATA_GW="$value" ;;
         DATA_IP) DATA_IP="$value" ;;
